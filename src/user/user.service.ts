@@ -37,6 +37,10 @@ export class UserService {
     return await this.userModel.findOne({ email }).select('+password');
   }
 
+  async getById(user: any): Promise<User> {
+    return await this.userModel.findById(user?._id);
+  }
+
   async delete(_id): Promise<User> {
     return await this.userModel.findByIdAndRemove(_id);
   }

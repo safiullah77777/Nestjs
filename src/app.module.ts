@@ -6,6 +6,7 @@ import { User } from './user/entity/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -13,7 +14,16 @@ import { MailerModule } from '@nestjs-modules/mailer';
     // UsersModule,
     UserModule,
     AuthModule,
-    MailerModule
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        auth: {
+          user: 'safiullah.eb19102107@gmail.com',
+          pass: 'dlgdfeihgiufmahz',
+        },
+      },
+    }),
+    MailModule,
   ],
 })
 export class AppModule {}

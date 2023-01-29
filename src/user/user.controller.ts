@@ -7,35 +7,44 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userServicer: UserService) {}
+  constructor(private userService: UserService) {}
+
+
+  
 
   @Post()
   createUser(@Body() createUser: CreateUserDto) {
-    return this.userServicer.create(createUser);
+    return this.userService.create(createUser);
   }
 
 
-  @Get()
+  @Get('/all')
   getUsers() {
-    return this.userServicer.getAll();
+    return this.userService.getAll();
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get()
+  getPersonalDetail(@Req() req:Request) {
+    console.log({...req?.user})
+    return this.userService.getById(req?.user)
+  }
+  
   @Get('/:_id')
   getUser(@Param() params: GetUserDto) {
     console.log(params)
-    return this.userServicer.get(params);
+    return this.userService.get(params);
   }
 
   @Delete('/:_id')
   deleteUser(@Param() _id: GetUserDto) {
-    return this.userServicer.delete(_id);
+    return this.userService.delete(_id);
   }
 
   @Put('/:id')
   updateUser(@Req() req:Request , @Param() params:{id:string} ) {
     console.log(params)
-    return this.userServicer.update(req,params.id);
+    return this.userService.update(req,params.id);
   }
  
 
