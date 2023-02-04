@@ -7,14 +7,11 @@ import { LoginDto } from './login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard('local'))
   @Post('/login')
   async login(@Request() req) {
-    
     return this.authService.login(req.user);
   }
 }
