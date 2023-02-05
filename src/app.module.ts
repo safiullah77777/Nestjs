@@ -8,6 +8,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { OtpModule } from './otp/otp.module';
 import { Users } from './user/entity/user.entity';
+import { Otp } from './otp/entity/otp.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -18,7 +19,7 @@ import { Users } from './user/entity/user.entity';
       username: 'postgres',
       password: '29011999',
       database: 'postgres',
-      entities: [Users],
+      entities: [Users,Otp],
       synchronize: true,
     }),
     // UsersModule,

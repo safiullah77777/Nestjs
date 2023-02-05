@@ -18,10 +18,20 @@ export class Users {
   @Column()
   email: string;
 
+  private tempPassword: string;
+
   @Column()
   password: string;
 
   @Column({ default: false })
   isVerified: boolean;
 
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.tempPassword !== this.password) {
+      const salt = await bcrypt.genSalt();
+      this.password = await bcrypt.hash(this.password, salt);
+    }
+  }
 }

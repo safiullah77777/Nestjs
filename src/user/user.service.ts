@@ -8,10 +8,12 @@ import { User, UserDocument } from './schema/user.schema';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from './dtos/updateUser.dto';
+import { OtpService } from 'src/otp/otp.service';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Users) private userRepository: Repository<Users>,
+    private otpSerivce:OtpService
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<Users> {
@@ -35,6 +37,8 @@ export class UserService {
     // user.email = createUserDto.email;
     // user.password = createUserDto.password;
     // user.isVerified = createUserDto.isVerified;
+    const otp=await this.otpSerivce.create();
+    console.log(otp)
     return await this.userRepository.save(user);
     // const payload = { email: user.email, sub: user._id };
     // return {
