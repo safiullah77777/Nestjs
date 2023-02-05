@@ -9,9 +9,9 @@ import { Otp } from './entity/otp.entity';
 export class OtpService {
   constructor(@InjectRepository(Otp) private otpRepository: Repository<Otp>) {}
 
-  async create(): Promise<Otp> {
+  async create(): Promise<string> {
     const otpNumber = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHash = await hashPassword(otpNumber);
-    return await this.otpRepository.save({ otp: otpHash });
+    return otpNumber;
   }
 }
