@@ -1,4 +1,7 @@
 import { Controller } from '@nestjs/common';
 
 @Controller('otp')
-export class OtpController {}
+export class OtpController {
+  constructor() {}
+  
+}
