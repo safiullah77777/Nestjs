@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { GetUserDto } from './dtos/getUser.dto';
+import { UpdateUserDto } from './dtos/updateUser.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -15,6 +16,7 @@ export class UserController {
   @Post()
   createUser(@Body() createUser: CreateUserDto) {
     return this.userService.create(createUser);
+    
   }
 
 
@@ -26,25 +28,23 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   getPersonalDetail(@Req() req:Request) {
-    console.log({...req?.user})
-    return this.userService.getById(req?.user)
+    return this.userService.get(req?.user)
   }
   
-  @Get('/:_id')
+  @Get('/:id')
   getUser(@Param() params: GetUserDto) {
-    console.log(params)
     return this.userService.get(params);
   }
 
-  @Delete('/:_id')
-  deleteUser(@Param() _id: GetUserDto) {
-    return this.userService.delete(_id);
+  @Delete('/:id')
+  deleteUser(@Param() id: string) {
+    return this.userService.delete(id);
   }
 
+  // @Req() req:Request , @Param() params:{id:string} 
   @Put('/:id')
-  updateUser(@Req() req:Request , @Param() params:{id:string} ) {
-    console.log(params)
-    return this.userService.update(req,params.id);
+  updateUser(@Param('id') id:string,@Body() updateUserDto:UpdateUserDto) {
+    return this.userService.update(id,updateUserDto);
   }
  
 
