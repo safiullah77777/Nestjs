@@ -1,7 +1,8 @@
 import {
-//   BeforeInsert,
-//   BeforeUpdate,
+  //   BeforeInsert,
+  //   BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -17,4 +18,7 @@ export class Otp {
 
   @Column({ default: false })
   used: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

@@ -4,21 +4,27 @@ import { Request } from 'express';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { Users } from './entity/user.entity';
-import { User, UserDocument } from './schema/user.schema';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { OtpService } from 'src/otp/otp.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
+import { Inject } from '@nestjs/common/decorators';
+import { forwardRef } from '@nestjs/common/utils';
+import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Users) private userRepository: Repository<Users>,
-    private otpSerivce: OtpService,
-    private mailerService: MailerService,
-    private jwtService: JwtService,
-  ) {}
+    // private otpSerivce: OtpService, // private authService: AuthService,
+    @Inject(forwardRef(() => OtpService))
+    private readonly otpSerivce: OtpService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
+  ) // @Inject(forwardRef(() => JwtService)) private readonly jwtService: JwtService,
+
+  {}
 
   async create(createUserDto: CreateUserDto): Promise<any> {
     const alreadyUser = await this.userRepository.findOne({
@@ -37,22 +43,10 @@ export class UserService {
     Object.keys(createUserDto).forEach(
       (item) => (user[item] = createUserDto[item]),
     );
-    // user.name = createUserDto.name;
-    // user.email = createUserDto.email;
-    // user.password = createUserDto.password;
-    // user.isVerified = createUserDto.isVerified;
-    const otp = await this.otpSerivce.create();
-    this.mailerService.sendMail({
-      from: 'safiullah.eb19102107@gmil.com',
-      to: user.email,
-      text: `your otp verfication code is:${otp}`,
-    });
-    const res = await this.userRepository.save(user);
-    console.log({ otp, res:[res.id,res.email] });
-    const payload = { email: res.email, sub: res.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    const otp = await this.otpSerivce.create(createUserDto.email);
+    user.otpId = otp.id;
+    await this.userRepository.save(user);
+    return this.authService.login({ id: user.id, email: user.email });
   }
 
   async getAll(): Promise<Users[]> {

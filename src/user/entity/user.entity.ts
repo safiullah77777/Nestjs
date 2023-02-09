@@ -26,6 +26,9 @@ export class Users {
   @Column({ default: false })
   isVerified: boolean;
 
+  @Column({ nullable: true })
+  otpId: string;
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
